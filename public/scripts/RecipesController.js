@@ -1,3 +1,4 @@
+/* global angular*/
 /**
  * This file holds the recipes controller module
  *
@@ -34,7 +35,7 @@
                 $scope.categories.unshift({
                     name: 'All Categories',
                     _id: ''
-                })//We add a all categories object so we have another option
+                }) //We add a all categories object so we have another option
                 $scope.standard = $scope.categories[0]
             }
 
@@ -45,9 +46,12 @@
              * @return {null} we don't return anything
              */
             $scope.deleteRecipe = function(id, index) {
-                dataService.deleteRecipe(id, function(response) {
-                    $scope.recipes.splice(index, 1) //We remove the recipe from the array
-                })
+
+                if (confirm('Are you sure you want to delete this recipe?')) { //We ask if they are sure that they want to delte the recipe
+                    dataService.deleteRecipe(id, function() {
+                        $scope.recipes.splice(index, 1) //We remove the recipe from the array
+                    })
+                }
             }
 
             /**

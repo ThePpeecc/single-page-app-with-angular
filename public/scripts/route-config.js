@@ -1,5 +1,6 @@
+/* global angular*/
 (function() {
-    'use strict';
+    'use strict'
 
     // The Angular $routeProvider is used to configure routes for your application.
 
@@ -12,7 +13,7 @@
 
     angular
         .module('app')
-        .config(config);
+        .config(config)
 
     function config($routeProvider) {
         $routeProvider
@@ -33,6 +34,6 @@
             })
             .otherwise({
                 redirectTo: '/'
-            });
+            })
     }
-})();
+})()

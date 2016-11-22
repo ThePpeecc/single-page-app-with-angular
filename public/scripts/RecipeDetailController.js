@@ -1,3 +1,4 @@
+/* global angular*/
 /**
  * This file holds the recipe detail controller module
  *
@@ -93,7 +94,7 @@
              * @type {post}
              */
             $scope.saveRecipe = function() {
-                dataService.addRecipe($scope.recipe, function(response) {
+                dataService.addRecipe($scope.recipe, function() {
                     $scope.edit = true
                 }, errorHandeler)
             }
@@ -103,7 +104,7 @@
              * @type {put}
              */
             $scope.updateRecipe = function() {
-                dataService.updateRecipeAtID($scope.recipe._id, $scope.recipe, function(response) {}, errorHandeler)
+                dataService.updateRecipeAtID($scope.recipe._id, $scope.recipe, function() {}, errorHandeler)
             }
 
             /**

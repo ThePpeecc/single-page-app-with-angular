@@ -1,3 +1,4 @@
+/* global angular*/
 /**
  * This file holds the data service module
  *
