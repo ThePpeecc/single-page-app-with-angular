@@ -15,12 +15,15 @@
  */
 (function() {
     angular.module('app') // We get the app module
-        .controller('RecipeDetailController', function($scope, $location, dataService) {
+        .controller('RecipeDetailController', function($location, dataService) {
+
+            var detailController = this
 
             //We instantiate some of the scope variables
-            $scope.recipe = {}
-            $scope.errors = []
-            $scope.foodItems = []
+            detailController.recipe = {}
+            detailController.errors = []
+            detailController.foodItems = []
+            detailController.done = false
 
             //We tjek here if we are on the edit page or the add page
             if ($location.url().split('/')[1] === 'edit') {
@@ -31,11 +34,11 @@
                  * @type {Get}
                  */
                 dataService.getRecipeAtID(recipeID, function(response) { //We get the recipe object
-                    $scope.recipe = response.data
+                    detailController.recipe = response.data
                 })
-                $scope.edit = true //This little variable turns on/off different ui parts on the recipe-detail view
+                detailController.edit = true //This little variable turns on/off different ui parts on the recipe-detail view
             } else {
-                $scope.recipe = { //We add an object with some empty parameters
+                detailController.recipe = { //We add an object with some empty parameters
                     name: '',
                     category: '',
                     ingredients: [{
@@ -47,7 +50,7 @@
                         description: ''
                     }]
                 }
-                $scope.edit = false //This little variable turns on/off different ui parts on the recipe-detail view
+                detailController.edit = false //This little variable turns on/off different ui parts on the recipe-detail view
             }
 
             /**
@@ -55,10 +58,10 @@
              * @type {Get}
              */
             dataService.getCategories(function(response) {
-                $scope.categories = response.data
-                $scope.categories.forEach(category => {
-                    if (category.name == $scope.recipe.category) {
-                        $scope.standard = category //We sort so we show the category that our recipe is at
+                detailController.categories = response.data
+                detailController.categories.forEach(category => {
+                    if (category.name == detailController.recipe.category) {
+                        detailController.standard = category //We sort so we show the category that our recipe is at
                     }
                 })
             })
@@ -68,7 +71,7 @@
              * @type {get}
              */
             dataService.getFoodItems(function(response) {
-                $scope.foodItems = response.data
+                detailController.foodItems = response.data
             })
 
             /**
@@ -79,23 +82,33 @@
             var errorHandeler = function(err) {
                 var errorArray = []
                 var allErrors = err.data.errors //Here we pull out an object with different errors as parameters
-
                 for (let potentialErr in allErrors) { //We run through all the parameters
                     if (typeof allErrors[potentialErr] === 'object') { //The errors are an object
                         errorArray = errorArray.concat(allErrors[potentialErr]) //We concat them to the errorArray
                     }
                 }
-                $scope.errors = errorArray //We send the errors to the view
+                detailController.errors = errorArray //We send the errors to the view
 
             }
 
+
             /**
-             * Service funciton that add a new recipe
+             * Service function that updates a vairable
+             * @return {null}   we don't retrun anything
+             */
+            function done() {
+                detailController.done = true
+            }
+
+            /**
+             * Service function that add a new recipe
              * @type {post}
              */
-            $scope.saveRecipe = function() {
-                dataService.addRecipe($scope.recipe, function() {
-                    $scope.edit = true
+            detailController.saveRecipe = function() {
+                dataService.addRecipe(detailController.recipe, function(response) {
+                    detailController.recipe = response.data
+                    detailController.edit = true
+                    done()
                 }, errorHandeler)
             }
 
@@ -103,15 +116,17 @@
              * Service funciton that updates a recipe
              * @type {put}
              */
-            $scope.updateRecipe = function() {
-                dataService.updateRecipeAtID($scope.recipe._id, $scope.recipe, function() {}, errorHandeler)
+            detailController.updateRecipe = function() {
+                dataService.updateRecipeAtID(detailController.recipe._id, detailController.recipe, function() {
+                    done()
+                }, errorHandeler)
             }
 
             /**
              * Simple funciton that returns to the recipes view
              * @return {null}       we don't return anything
              */
-            $scope.cancel = function() {
+            detailController.cancel = function() {
                 $location.path('/')
             }
 
@@ -121,7 +136,7 @@
              * @param  {array} foodItems  An array of ingredient objects
              * @return {object}           Returns a ingredient object
              */
-            $scope.findFoodItem = function(foodItem, foodItems) {
+            detailController.findFoodItem = function(foodItem, foodItems) {
                 for (var i = 0; i < foodItems.length; i++) {
                     if (foodItems[i].name == foodItem) { //We run through all the ingredients until we find the ingredient that match
                         return foodItems[i]
@@ -135,7 +150,7 @@
              * @param  {int} index    The index of the item we will be removing
              * @return {null}       we don't return anything
              */
-            $scope.deleteFromArray = function(array, index) {
+            detailController.deleteFromArray = function(array, index) {
                 array.splice(index, 1)
             }
 
@@ -143,7 +158,7 @@
              * Funciton that adds an empty object to an array
              * @param {array} array the array we add an empty object to
              */
-            $scope.addNewItem = function(array) {
+            detailController.addNewItem = function(array) {
                 array.push({})
             }
         })

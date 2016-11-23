@@ -1,32 +1,24 @@
-<div ng-controller="RecipeDetailController">
+<div ng-controller="RecipeDetailController as detailController">
 <div class="grid-100 row controls">
   <div class="grid-50">
-    <!-- TODO Add a binding expression to display the recipe name
-      when editing a recipe. When adding a recipe, display the
-      static text 'Add New Recipe'. -->
-    <h2>{{edit ? recipe.name : 'Add New Recipe'}}</h2>
+
+    <h2>{{detailController.edit ? detailController.recipe.name : 'Add New Recipe'}}</h2>
   </div>
   <div class="grid-50">
     <div class="flush-right">
-      <!-- TODO Add directives to both the "Save Recipe" and "Cancel"
-        buttons in order to handle user clicks. -->
-      <button ng-click="edit ? updateRecipe() : saveRecipe()">Save Recipe</button>
-      <button class="secondary" ng-click="cancel()">Cancel</button>
+
+      <button ng-click="detailController.edit ? detailController.updateRecipe() : detailController.saveRecipe()">Save Recipe</button>
+      <button class="secondary" ng-click="detailController.cancel();">{{detailController.done ? 'Done' : 'Cancel'}}</button>
     </div>
   </div>
 </div>
 <div class="clear"></div>
 
-<!-- TODO Add a directive to this div element so that it only displays
-  when there are validation messages to display. -->
-<div class="grid-100 row" ng-if="errors.length > 0">
+<div class="grid-100 row" ng-if="detailController.errors.length > 0">
   <div class="grid-100">
     <p><i>The following errors were found:</i></p>
     <ul class="validation-errors">
-      <!-- TODO Add a directive to this li element so that it repeats
-        for each validation message that there is to display -->
-      <li ng-repeat="(index, error) in errors">
-        <!-- TODO Add a binding expression to display the validation user message. -->
+      <li ng-repeat="(index, error) in detailController.errors">
         {{error.userMessage}}
       </li>
     </ul>
@@ -42,9 +34,7 @@
   </div>
   <div class="grid-40">
     <p>
-      <!-- TODO Add a directive to this input element to bind its value
-        to the recipe model's `name` property. -->
-      <input type="text" value="" ng-model="recipe.name">
+      <input type="text" value="" ng-model="detailController.recipe.name">
     </p>
   </div>
 </div>
@@ -58,9 +48,7 @@
   </div>
   <div class="grid-60">
     <p>
-      <!-- TODO Add a directive to this textarea element to bind its content
-        to the recipe model's `description` property. -->
-      <textarea ng-model="recipe.description"></textarea>
+      <textarea ng-model="detailController.recipe.description"></textarea>
     </p>
   </div>
 </div>
@@ -74,10 +62,7 @@
   </div>
   <div class="grid-30">
     <p>
-      <!-- TODO Add directives to this select element to bind its value
-        to the recipe model's `category` property and to populate the list
-        with the categories from the database. -->
-      <select ng-model="standard" ng-options="category.name for category in categories" ng-change="recipe.category = standard.name">
+      <select ng-model="detailController.standard" ng-options="category.name for category in detailController.categories" ng-change="detailController.recipe.category = detailController.standard.name">
       </select>
     </p>
   </div>
@@ -92,9 +77,7 @@
   </div>
   <div class="grid-20">
     <p>
-      <!-- TODO Add a directive to this input element to bind its value
-        to the recipe model's `prepTime` property. -->
-      <input type="number" ng-model="recipe.prepTime">
+      <input type="number" ng-model="detailController.recipe.prepTime">
     </p>
   </div>
 </div>
@@ -108,9 +91,7 @@
   </div>
   <div class="grid-20">
     <p>
-      <!-- TODO Add a directive to this input element to bind its value
-        to the recipe model's `cookTime` property. -->
-      <input type="number" ng-model="recipe.cookTime">
+      <input type="number" ng-model="detailController.recipe.cookTime">
     </p>
   </div>
 </div>
@@ -137,48 +118,34 @@
       <label> Amount </label>
     </p>
   </div>
-
-  <!-- TODO Add a directive to this div element so that it repeats
-    for each recipe ingredient to display. -->
-  <div class="ingredient-row" ng-repeat="(index, ingredient) in recipe.ingredients">
+  <div class="ingredient-row" ng-repeat="(index, ingredient) in detailController.recipe.ingredients">
     <div class="prefix-20 grid-30">
       <p>
-        <!-- TODO Add directives to this select element to bind its value
-          to the recipe ingredient model's `foodItem` property and to
-          populate the list with the food items from the database. -->
-          {{standardFood = findFoodItem(ingredient.foodItem, foodItems);""}}
-        <select ng-model="standardFood" ng-options="foodItem.name for foodItem in foodItems" ng-change="ingredient.foodItem = standardFood.name">
+          {{standardFood = detailController.findFoodItem(ingredient.foodItem, detailController.foodItems);""}}
+        <select ng-model="standardFood" ng-options="foodItem.name for foodItem in detailController.foodItems" ng-change="ingredient.foodItem = standardFood.name">
         </select>
       </p>
     </div>
     <div class="grid-30">
       <p>
-        <!-- TODO Add a directive to this input element to bind its value
-          to the recipe ingredient model's `condition` property. -->
         <input type="text" ng-model="ingredient.condition">
       </p>
     </div>
     <div class="grid-15">
       <p>
-        <!-- TODO Add a directive to this input element to bind its value
-          to the recipe ingredient model's `amount` property. -->
         <input type="text" ng-model="ingredient.amount">
       </p>
     </div>
     <div class="grid-5 pad-top">
       <p class="flush-right">
-        <!-- TODO Add a directive to this anchor element so that you can
-          delete the recipe ingredient when the user clicks on the 'Delete' link. -->
-        <a class="no-action-link" ng-click="deleteFromArray(recipe.ingredients, index)"> <img src="images/delete.svg" height="12px"> </a>
+        <a class="no-action-link" ng-click="detailController.deleteFromArray(detailController.recipe.ingredients, index)"> <img src="images/delete.svg" height="12px"> </a>
       </p>
     </div>
   </div>
 
   <div class="prefix-20 grid-80 add-row">
     <p>
-      <!-- TODO Add a directive to this button in order to handle
-        when the user clicks to add a new recipe ingredient. -->
-      <button ng-click="addNewItem(recipe.ingredients)">+ Add Another Ingredient</button>
+      <button ng-click="detailController.addNewItem(detailController.recipe.ingredients)">+ Add Another Ingredient</button>
     </p>
   </div>
 
@@ -197,30 +164,22 @@
     </p>
   </div>
 
-  <!-- TODO Add a directive to this div element so that it repeats
-    for each recipe step to display. -->
-  <div class="step-row" ng-repeat="(index, step) in recipe.steps">
+  <div class="step-row" ng-repeat="(index, step) in detailController.recipe.steps">
     <div class="prefix-20 grid-75">
       <p>
-        <!-- TODO Add a directive to this input element to bind its value
-          to the recipe step model's `description` property. -->
         <input type="text" ng-model="step.description">
       </p>
     </div>
     <div class="grid-5 pad-top">
       <p class="flush-right">
-        <!-- TODO Add a directive to this anchor element so that you can
-          delete the recipe step when the user clicks on the 'Delete' link. -->
-        <a class="no-action-link" ng-click="deleteFromArray(recipe.steps, index)"> <img src="images/delete.svg" height="12px"> </a>
+        <a class="no-action-link" ng-click="detailController.deleteFromArray(detailController.recipe.steps, index)"> <img src="images/delete.svg" height="12px"> </a>
       </p>
     </div>
   </div>
 
   <div class="prefix-20 grid-80 add-row">
     <p>
-     <!-- TODO Add a directive to this button in order to handle
-       when the user clicks to add a new recipe step. -->
-     <button ng-click="addNewItem(recipe.steps)">+ Add Another Step</button>
+     <button ng-click="detailController.addNewItem(recipe.steps)">+ Add Another Step</button>
     </p>
   </div>
 

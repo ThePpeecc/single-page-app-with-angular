@@ -16,14 +16,16 @@
 (function() {
     angular.module('app') //We get the app module
         //We create the controller
-        .controller('RecipesController', function($scope, $location, dataService) {
+        .controller('RecipesController', function($location, dataService) {
+
+            var recipesCtr = this
 
             /**
              * This is works as a callBack function that gets all the recipes and shoves them into a scope variable
              * @return {null} we don't return anything
              */
             var getRecipesNow = function(response) {
-                $scope.recipes = response.data // We assing the recipes to a scope variable
+                recipesCtr.recipes = response.data // We assing the recipes to a scope variable
             }
 
             /**
@@ -31,12 +33,12 @@
              * @return {null} we don't return anything
              */
             var displayCategories = function(response) {
-                $scope.categories = response.data
-                $scope.categories.unshift({
+                recipesCtr.categories = response.data
+                recipesCtr.categories.unshift({
                     name: 'All Categories',
                     _id: ''
                 }) //We add a all categories object so we have another option
-                $scope.standard = $scope.categories[0]
+                recipesCtr.standard = recipesCtr.categories[0]
             }
 
             /**
@@ -45,11 +47,11 @@
              * @param  {int} index    The index of the recipe in the recipes array
              * @return {null} we don't return anything
              */
-            $scope.deleteRecipe = function(id, index) {
+            recipesCtr.deleteRecipe = function(id, index) {
 
                 if (confirm('Are you sure you want to delete this recipe?')) { //We ask if they are sure that they want to delte the recipe
                     dataService.deleteRecipe(id, function() {
-                        $scope.recipes.splice(index, 1) //We remove the recipe from the array
+                        recipesCtr.recipes.splice(index, 1) //We remove the recipe from the array
                     })
                 }
             }
@@ -57,7 +59,7 @@
             /**
              * Opens the add recipe view
              */
-            $scope.addRecipe = function() {
+            recipesCtr.addRecipe = function() {
                 $location.path('/add/')
             }
 
@@ -66,12 +68,12 @@
              * @param  {String} category The category we search for
              * @return {null} we don't return anything
              */
-            $scope.filterList = function(category) {
+            recipesCtr.filterList = function(category) {
                 if (category === 'All Categories') { //If it is all categories
                     dataService.getRecipes(getRecipesNow) //We download all of the recipes
                 } else {
                     dataService.getRecipesForCategory(category, function(response) {
-                        $scope.recipes = response.data //we fill the recipes array with new data
+                        recipesCtr.recipes = response.data //we fill the recipes array with new data
                     })
                 }
             }

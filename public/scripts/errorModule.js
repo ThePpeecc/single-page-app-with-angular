@@ -15,11 +15,12 @@
  */
 (function() {
     angular.module('app') //We get the app
-        .factory('$exceptionHandler', function() {
-            return function(exception) {
+        .factory('$exceptionHandler', function($injector) {
+            return function() {
+                var $location = $injector.get($location)
                 //Everything in here is exicuted when an error oucceres
                 alert('Seems an unexpected error has occured, please try again later. If the error persists, please contact the adminstrator')
-                throw exception
+                $location.path('/')
             }
         })
 })()
